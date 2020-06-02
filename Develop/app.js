@@ -11,6 +11,7 @@ const path = require("path");
 
 const optionQuestions = ["GitHub username:", "School:"]; //last question by employee role"
 let roleQuestion = ""; // Selected role last question
+let teamArray = [];
 
 const aboutManager = [{
         type: "input",
@@ -32,7 +33,7 @@ const aboutManager = [{
 const firstQuestion = [{
     type: "input",
     name: "number",
-    message: "How many employees in your team?"
+    message: "How many employees in your team, manager included?"
 }];
 const questions = [{
         message: "Select employee role:",
@@ -66,12 +67,19 @@ function promptEmployee(questions) {
 async function init() {
     // Code to use inquirer to gather information about the development team members,and to create objects for each team member
     const managerInfo = await promptEmployee(aboutManager);
+    teamArray.push({
+        "manager": managerInfo.manager,
+        "id": 1,
+        "email": managerInfo.email,
+        "office": managerInfo.office
+    });
     const firstAnswer = await promptEmployee(firstQuestion);
     const membersNumber = firstAnswer.number;
-    for (i = 0; i < membersNumber; i++) {
+    for (i = 0; i < (membersNumber - 1); i++) {
         const number = i + 1;
-        console.log("-------------------------")
-        console.log("Employee: " + number)
+        const employeeId = i + 2;
+        console.log("------------------------------------");
+        console.log("Employee" + number + ", assigned id: " + employeeId);
         const answers = await promptEmployee(questions); // Answers objetc to prompt
         const role = answers.role;
         if (role == "Employee") {
@@ -82,9 +90,17 @@ async function init() {
         lastQuestion[0].message = roleQuestion;
         const lastAnswer = await promptEmployee(lastQuestion);
         answers.detail = lastAnswer.detail;
-        answers.manager = managerInfo.manager;
-        answers.email = managerInfo.email;
-        answers.office = managerInfo.office;
+        teamArray.push({
+            "name": answers.name,
+            "id": employeeId,
+            "email": answers.email,
+            "detail": answers.detail
+        });
+        if (employeeId == membersNumber) {
+            console.log("------------------------------------")
+            console.log("All employees recorded")
+            console.log(teamArray)
+        }
     };
 }
 
