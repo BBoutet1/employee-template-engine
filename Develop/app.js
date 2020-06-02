@@ -9,17 +9,15 @@ const path = require("path");
 // const render = require("./lib/htmlRenderer");​​
 // Code to use inquirer to gather information about the development team members,
 
-let membersNumber = 0;
 const optionQuestions = ["Office number:", "GitHub username:", "School"]; //last question by employee category"
 let categoryQuestion = ""; // Selected category last question
 
-
+const firstQuestion = [{
+    type: "input",
+    name: "number",
+    message: "How many employees in your team?"
+}];
 const questions = [{
-        type: "input",
-        name: "number",
-        message: "How many employees in your team?"
-    },
-    {
         message: "Select employee type:",
         name: "category",
         type: "list",
@@ -37,34 +35,35 @@ const questions = [{
     },
 ];
 
-const finalQuestion = [{
+const lastQuestion = [{
     type: "input",
     name: "detail",
 }];
 
-function promptEmployee() {
+
+function promptEmployee(questions) {
     return inquirer.prompt(questions);
 }
 
-function lastPrompt() {
-    return inquirer.prompt(finalQuestion);
-}
 
 async function init() {
-    const answers = await promptEmployee(); // Answers objetc to prompt
-    const category = answers.category;
-    if (category == "Manager") {
-        categoryQuestion = optionQuestions[0];
-    } else if (category == "Employee") {
-        categoryQuestion = optionQuestions[1];
-    } else if (category == "Intern") {
-        categoryQuestion = optionQuestions[2];
-    }
-    finalQuestion[0].message = categoryQuestion;
-    const lastAnswer = await lastPrompt();
-    answers.detail = lastAnswer.detail;
+    const firstAnswer = await promptEmployee(firstQuestion);
+    const membersNumber = firstAnswer.number;
+    for (i = 0; i < membersNumber; i++) {
+        const answers = await promptEmployee(questions); // Answers objetc to prompt
+        const category = answers.category;
+        if (category == "Manager") {
+            categoryQuestion = optionQuestions[0];
+        } else if (category == "Employee") {
+            categoryQuestion = optionQuestions[1];
+        } else if (category == "Intern") {
+            categoryQuestion = optionQuestions[2];
+        }
+        lastQuestion[0].message = categoryQuestion;
+        const lastAnswer = await promptEmployee(lastQuestion);
+        answers.detail = lastAnswer.detail;
+    };
 
-    console.log(answers);
 
 }
 
