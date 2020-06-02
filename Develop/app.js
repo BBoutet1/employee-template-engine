@@ -7,10 +7,27 @@ const path = require("path");
 // const OUTPUT_DIR = path.resolve(__dirname, "output")
 // const outputPath = path.join(OUTPUT_DIR, "team.html");​
 // const render = require("./lib/htmlRenderer");​​
-// Code to use inquirer to gather information about the development team members,
 
-const optionQuestions = ["Office number:", "GitHub username:", "School"]; //last question by employee category"
-let categoryQuestion = ""; // Selected category last question
+
+const optionQuestions = ["GitHub username:", "School:"]; //last question by employee role"
+let roleQuestion = ""; // Selected role last question
+
+const aboutManager = [{
+        type: "input",
+        name: "manager",
+        message: "Enter your name as Manager:"
+    },
+    {
+        type: "input",
+        name: "office",
+        message: "Enter your office number:"
+    },
+    {
+        type: "input",
+        name: "email",
+        message: "Enter your email address:"
+    },
+];
 
 const firstQuestion = [{
     type: "input",
@@ -18,10 +35,10 @@ const firstQuestion = [{
     message: "How many employees in your team?"
 }];
 const questions = [{
-        message: "Select employee type:",
-        name: "category",
+        message: "Select employee role:",
+        name: "role",
         type: "list",
-        choices: ["Manager", "Employee", "Intern"],
+        choices: ["Employee", "Intern"],
     },
     {
         type: "input",
@@ -47,29 +64,31 @@ function promptEmployee(questions) {
 
 
 async function init() {
+    // Code to use inquirer to gather information about the development team members,and to create objects for each team member
+    const managerInfo = await promptEmployee(aboutManager);
     const firstAnswer = await promptEmployee(firstQuestion);
     const membersNumber = firstAnswer.number;
     for (i = 0; i < membersNumber; i++) {
+        const number = i + 1;
+        console.log("-------------------------")
+        console.log("Employee: " + number)
         const answers = await promptEmployee(questions); // Answers objetc to prompt
-        const category = answers.category;
-        if (category == "Manager") {
-            categoryQuestion = optionQuestions[0];
-        } else if (category == "Employee") {
-            categoryQuestion = optionQuestions[1];
-        } else if (category == "Intern") {
-            categoryQuestion = optionQuestions[2];
+        const role = answers.role;
+        if (role == "Employee") {
+            roleQuestion = optionQuestions[0];
+        } else if (role == "Intern") {
+            roleQuestion = optionQuestions[1];
         }
-        lastQuestion[0].message = categoryQuestion;
+        lastQuestion[0].message = roleQuestion;
         const lastAnswer = await promptEmployee(lastQuestion);
         answers.detail = lastAnswer.detail;
+        answers.manager = managerInfo.manager;
+        answers.email = managerInfo.email;
+        answers.office = managerInfo.office;
     };
-
-
 }
 
 init();
-
-// and to create objects for each team member (using the correct classes as blueprints!)
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
