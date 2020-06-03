@@ -10,7 +10,6 @@ const path = require("path");
 
 
 const optionQuestions = ["GitHub username:", "School:"]; //last question by employee role"
-let roleQuestion = ""; // Selected role last question
 let teamArray = [];
 
 const aboutManager = [{
@@ -30,21 +29,21 @@ const aboutManager = [{
     },
 ];
 
-const firstQuestion = [{
-    type: "input",
-    name: "number",
-    message: "How many employees in your team, manager included?"
+const addAnEmployee = [{
+    type: "confirm",
+    name: "addition",
+    message: "Do you want to add an employee?"
 }];
 const questions = [{
+        type: "input",
+        name: "name",
+        message: "Enter employee name:"
+    },
+    {
         message: "Select employee role:",
         name: "role",
         type: "list",
         choices: ["Employee", "Intern"],
-    },
-    {
-        type: "input",
-        name: "name",
-        message: "Enter employee name:"
     },
     {
         type: "input",
@@ -73,32 +72,35 @@ async function init() {
         "email": managerInfo.email,
         "office": managerInfo.office
     });
-    const firstAnswer = await promptEmployee(firstQuestion);
-    const membersNumber = firstAnswer.number;
-    for (i = 0; i < (membersNumber - 1); i++) {
-        const number = i + 1;
-        const employeeId = i + 2;
-        console.log("------------------------------------");
-        console.log("Employee" + number + ", assigned id: " + employeeId);
-        const answers = await promptEmployee(questions); // Answers objetc to prompt
-        const role = answers.role;
-        if (role == "Employee") {
-            roleQuestion = optionQuestions[0];
-        } else if (role == "Intern") {
-            roleQuestion = optionQuestions[1];
-        }
-        lastQuestion[0].message = roleQuestion;
-        const lastAnswer = await promptEmployee(lastQuestion);
-        answers.detail = lastAnswer.detail;
-        teamArray.push({
-            "name": answers.name,
-            "id": employeeId,
-            "email": answers.email,
-            "detail": answers.detail
-        });
-        if (employeeId == membersNumber) {
+    let employeeNumber = 1; //Number of employee (plus the manager)
+    let addQuestion = true; // Boolean for adding or not an employee
+    while (addQuestion == true) {
+        const addEmployee = await promptEmployee(addAnEmployee);
+        addQuestion = addEmployee.addition;
+
+        if (addQuestion == true) {
+            employeeNumber += 1
+            console.log("------------------------------------");
+            console.log("Adding an employee with id number: " + employeeNumber);
+            const answers = await promptEmployee(questions); // Answers objetc to prompt
+            const role = answers.role;
+            //Last question depending on the type of employee
+            if (role == "Employee") {
+                lastQuestion[0].message = optionQuestions[0];
+            } else if (role == "Intern") {
+                lastQuestion[0].message = optionQuestions[1];
+            }
+            const lastAnswer = await promptEmployee(lastQuestion);
+            answers.detail = lastAnswer.detail;
+            teamArray.push({
+                "name": answers.name,
+                "id": employeeNumber,
+                "email": answers.email,
+                "detail": answers.detail
+            });
+        } else {
             console.log("------------------------------------")
-            console.log("All employees recorded")
+            console.log("All employees recorded. The team contains " + employeeNumber + " employees")
             console.log(teamArray)
         }
     };
