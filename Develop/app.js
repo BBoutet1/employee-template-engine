@@ -2,19 +2,19 @@ const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
+``
 const path = require("path");
-// const fs = require("fs");​
-// const OUTPUT_DIR = path.resolve(__dirname, "output")
-// const outputPath = path.join(OUTPUT_DIR, "team.html");​
-// const render = require("./lib/htmlRenderer");​​
+const fs = require("fs");
+const OUTPUT_DIR = path.resolve(__dirname, "output")
+const outputPath = path.join(OUTPUT_DIR, "team.html")
+const render = require("./lib/htmlRenderer")
 
-
-const optionQuestions = ["GitHub username:", "School:"]; //last question by employee role"
 let teamArray = [];
 
+//Questions about the manager (only one manager per team)
 const aboutManager = [{
         type: "input",
-        name: "manager",
+        name: "name",
         message: "Enter your name as Manager:"
     },
     {
@@ -29,21 +29,22 @@ const aboutManager = [{
     },
 ];
 
+//Question about the rest of employees
 const addAnEmployee = [{
     type: "confirm",
     name: "addition",
     message: "Do you want to add an employee?"
 }];
 const questions = [{
-        type: "input",
-        name: "name",
-        message: "Enter employee name:"
-    },
-    {
         message: "Select employee role:",
         name: "role",
         type: "list",
-        choices: ["Employee", "Intern"],
+        choices: ["Engineer", "Intern"],
+    },
+    {
+        type: "input",
+        name: "name",
+        message: "Enter employee name:"
     },
     {
         type: "input",
@@ -52,9 +53,9 @@ const questions = [{
     },
 ];
 
+//Last question: school for the intern and gitHub user for the engineer
 const lastQuestion = [{
     type: "input",
-    name: "detail",
 }];
 
 
@@ -62,22 +63,17 @@ function promptEmployee(questions) {
     return inquirer.prompt(questions);
 }
 
-
+/* Code to use inquirer to gather information about the development team members,and to create objects for each team member */
 async function init() {
-    // Code to use inquirer to gather information about the development team members,and to create objects for each team member
+    // Only one manager in the team 
     const managerInfo = await promptEmployee(aboutManager);
-    teamArray.push({
-        "manager": managerInfo.manager,
-        "id": 1,
-        "email": managerInfo.email,
-        "office": managerInfo.office
-    });
-    let employeeNumber = 1; //Number of employee (plus the manager)
+    teamArray.push(new Manager(managerInfo.name, 1, managerInfo.email, managerInfo.office));
+    let employeeNumber = 1; //Number of employee (manager inclued)
     let addQuestion = true; // Boolean for adding or not an employee
+    // Multiple employees  allowed
     while (addQuestion == true) {
         const addEmployee = await promptEmployee(addAnEmployee);
         addQuestion = addEmployee.addition;
-
         if (addQuestion == true) {
             employeeNumber += 1
             console.log("------------------------------------");
@@ -85,23 +81,27 @@ async function init() {
             const answers = await promptEmployee(questions); // Answers objetc to prompt
             const role = answers.role;
             //Last question depending on the type of employee
-            if (role == "Employee") {
-                lastQuestion[0].message = optionQuestions[0];
+            if (role == "Engineer") {
+                lastQuestion[0].name = "gitHub";
+                lastQuestion[0].message = "GitHub username:";
+                const lastAnswer = await promptEmployee(lastQuestion);
+                answers.gitHub = lastAnswer.gitHub;
+                teamArray.push(new Engineer(answers.name, employeeNumber, answers.email, answers.gitHub));
             } else if (role == "Intern") {
-                lastQuestion[0].message = optionQuestions[1];
+                lastQuestion[0].message = "School:";
+                lastQuestion[0].name = "school";
+                const lastAnswer = await promptEmployee(lastQuestion);
+                answers.school = lastAnswer.school;
+                teamArray.push(new Intern(answers.name, employeeNumber, answers.email, answers.school));
             }
-            const lastAnswer = await promptEmployee(lastQuestion);
-            answers.detail = lastAnswer.detail;
-            teamArray.push({
-                "name": answers.name,
-                "id": employeeNumber,
-                "email": answers.email,
-                "detail": answers.detail
-            });
         } else {
+            // All employees recorded
             console.log("------------------------------------")
             console.log("All employees recorded. The team contains " + employeeNumber + " employees")
             console.log(teamArray)
+            let htmlRender;
+            htmlRender = render(teamArray);
+            console.log(htmlRender)
         }
     };
 }
