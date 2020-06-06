@@ -98,7 +98,6 @@ async function init() {
             // All employees recorded
             console.log("------------------------------------")
             console.log("All employees recorded. The team contains " + employeeNumber + " employees")
-            console.log(teamArray)
             const teamHtml = render(teamArray);
             fs.mkdirSync(OUTPUT_DIR, { recursive: true }); //Recursive property to create all levels of directory if not exist.
             fs.writeFile(outputPath, teamHtml, function(err) {
