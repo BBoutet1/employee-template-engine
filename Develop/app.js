@@ -99,19 +99,22 @@ async function init() {
             console.log("------------------------------------")
             console.log("All employees recorded. The team contains " + employeeNumber + " employees")
             console.log(teamArray)
-            let htmlRender;
-            htmlRender = render(teamArray);
-            console.log(htmlRender)
+            const teamHtml = render(teamArray);
+            fs.mkdirSync(OUTPUT_DIR)
+            fs.writeFile(outputPath, teamHtml, function(err) {
+                if (err) return console.log(err);
+                console.log("team.htm file created");
+            });
         }
     };
 }
 
 init();
 
-// After the user has input all employees desired, call the `render` function (required
+// After the user has input all employees desired, call the `render` function (required 
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
-// After you have your html, you're now ready to create an HTML file using the HTML
+// After you have your html, you're now ready to create an HTML file using the HTML DONE!
 // returned from the `render` function. Now write it to a file named `team.html` in the
 // `output` folder. You can use the variable `outputPath` above target this location.
 // Hint: you may need to check if the `output` folder exists and create it if it
