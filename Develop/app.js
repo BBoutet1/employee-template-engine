@@ -100,10 +100,10 @@ async function init() {
             console.log("All employees recorded. The team contains " + employeeNumber + " employees")
             console.log(teamArray)
             const teamHtml = render(teamArray);
-            fs.mkdirSync(OUTPUT_DIR)
+            fs.mkdirSync(OUTPUT_DIR, { recursive: true }); //Recursive property to create all levels of directory if not exist.
             fs.writeFile(outputPath, teamHtml, function(err) {
                 if (err) return console.log(err);
-                console.log("team.htm file created");
+                console.log("team.html file created");
             });
         }
     };
