@@ -29,6 +29,8 @@ node app.js
 
 The user is prompted for information about his team manage members. Team members are the manager and a mix of engineers or/and and interns. When the user has completed building the team, the application creates an HTML file that displays a nicely formatted team roster based on the information provided.
 
+<img src="./team-generator.gif">
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit)
