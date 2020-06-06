@@ -19,7 +19,7 @@ const aboutManager = [{
     },
     {
         type: "input",
-        name: "office",
+        name: "officeNumber",
         message: "Enter your office number:"
     },
     {
@@ -53,9 +53,10 @@ const questions = [{
     },
 ];
 
-//Last question: school for the intern and gitHub user for the engineer
+//Last question (school for the intern or github user for the engineer)
 const lastQuestion = [{
     type: "input",
+    //name and message properties  added in init()
 }];
 
 
@@ -67,7 +68,7 @@ function promptEmployee(questions) {
 async function init() {
     // Only one manager in the team 
     const managerInfo = await promptEmployee(aboutManager);
-    teamArray.push(new Manager(managerInfo.name, 1, managerInfo.email, managerInfo.office));
+    teamArray.push(new Manager(managerInfo.name, 1, managerInfo.email, managerInfo.officeNumber));
     let employeeNumber = 1; //Number of employee (manager inclued)
     let addQuestion = true; // Boolean for adding or not an employee
     // Multiple employees  allowed
@@ -82,11 +83,11 @@ async function init() {
             const role = answers.role;
             //Last question depending on the type of employee
             if (role == "Engineer") {
-                lastQuestion[0].name = "gitHub";
+                lastQuestion[0].name = "github";
                 lastQuestion[0].message = "GitHub username:";
                 const lastAnswer = await promptEmployee(lastQuestion);
-                answers.gitHub = lastAnswer.gitHub;
-                teamArray.push(new Engineer(answers.name, employeeNumber, answers.email, answers.gitHub));
+                answers.github = lastAnswer.github;
+                teamArray.push(new Engineer(answers.name, employeeNumber, answers.email, answers.github));
             } else if (role == "Intern") {
                 lastQuestion[0].message = "School:";
                 lastQuestion[0].name = "school";
@@ -109,20 +110,3 @@ async function init() {
 }
 
 init();
-
-// After the user has input all employees desired, call the `render` function (required 
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-// After you have your html, you're now ready to create an HTML file using the HTML DONE!
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an 
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work!```
