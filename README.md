@@ -10,9 +10,9 @@
 
 * [Installation](#installation)
 * [Usage](#usage)
-* [Tests](#tests)
 * [Licence](#licence)
 * [Contributing](#contributing)
+* [Tests](#tests)
 * [Questiions](#questions)
 * [Author information](#author-information)
 
@@ -42,7 +42,7 @@ Feel free to make a pull request.
 
 ## Tests
 
-Run the following  command line to test application units.
+Inside directory `/Develop/test`, run the below command line to test application units.
 ```sh
 npm run test
 ```
